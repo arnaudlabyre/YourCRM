@@ -1,0 +1,100 @@
+{% extends 'gestion/base.html' %}
+{% block companies_active %}active{% endblock %}
+
+{% block body %}
+<div class="albums-container container-fluid">
+
+    <!-- Albums -->
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>{{ user.username }}'s Companies</h3>
+        </div>
+        {% if companies %}
+            {% for companie in companies %}
+                <div class="col-sm-4 col-lg-2">
+                    <div class="thumbnail">
+                        <a href="{% url 'gestion:detail' companie.id %}">
+                            <img src="{{ companie.companie_logo.url }}" class="img-responsive">
+                        </a>
+                        <div class="caption">
+                            <h2>{{ companie.companie_name }}</h2>
+                            <h4>{{ companie.address }}</h4>
+
+                            <!-- View Details -->
+                            <a href="{% url 'gestion:detail' companie.id %}" class="btn btn-primary btn-sm" role="button">View Details</a>
+
+                            <!-- Delete Companies -->
+                            <form action="{% url 'gestion:delete_companie' companie.id %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="companie_id" value="{{ companie.id }}" />
+                                <button type="submit" class="btn btn-default btn-sm">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            </form>
+
+                            <!-- Favorite Album -->
+                            <a href="{% url 'gestion:favorite_companie' companie.id %}" class="btn btn-default btn-sm btn-favorite" role="button">
+                                <span class="glyphicon glyphicon-star {% if companie.is_favorite %}active{% endif %}"></span>
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+                {% cycle '' '' '' '' '' '<div class="clearfix visible-lg"></div>' %}
+            {% endfor %}
+        {% else %}
+            <div class="col-sm-12">
+                <br>
+                <a href="{% url 'gestion:create_companie' %}">
+                    <button type="button" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp; Add a Companie
+                    </button>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- If user searches and there are songs -->
+    {% if employees %}
+        <div class="row">
+            <div class="col-sm-12">
+                <h3>Employees</h3>
+            </div>
+            <div class="col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Surname</th>
+                                    <th>Companie</th>
+                                    <th>Favorite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee in employees %}
+                                    <tr>
+                                        <td>{{ employee.employee_name }}</td>
+                                        <td>{{ employee.employee_surname }}</td>
+                                        <td>
+                                            <a href="{% url 'gestion:detail' employee.companie.id %}">
+                                                <img src="{{ employee.companie.companie_logo.url }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
+                                            </a>
+                                            <a href="{% url 'gestion:detail' employee.companie.id %}">{{ employee.companie.companie_name }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'gestion:favorite' employee.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if employee.is_favorite %}active{% endif %}"></span></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

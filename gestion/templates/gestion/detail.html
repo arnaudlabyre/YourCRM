@@ -1,0 +1,84 @@
+{% extends 'gestion/base.html' %}
+{% block title %}{{ companie }}{% endblock %}
+{% block companies_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid songs-container">
+
+    <div class="row">
+
+        <!-- Left Companie Info -->
+        <div class="col-sm-4 col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <a href="{% url 'gestion:detail' companie.id %}">
+                        {% if companie.companie_logo %}
+                            <img src="{{ companie.companie_logo.url }}" class="img-responsive">
+                        {% else %}
+                            <h3>No image to display</h3>
+                        {% endif %}
+                    </a>
+                    <h1>{{ companie.companie_name }}</h1>
+                    <h2>{{ companie.address }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Employee Info -->
+        <div class="col-sm-8 col-md-9">
+
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" class="active"><a href="{% url 'gestion:detail' companie.id %}">View All</a></li>
+                <li role="presentation"><a href="{% url 'gestion:create_employee' companie.id %}">Add New Employee</a></li>
+            </ul>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <h3>All Employees</h3>
+
+                    {% if error_message %}
+                        <p><strong>{{ error_message }}</strong></p>
+                    {% endif %}
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>Favorite</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for employee in companie.employee_set.all %}
+                            <tr>
+                                <td>{{ employee.employee_name }}</td>
+                                <td>{{ employee.employee_surname }}</td>
+                                <td>
+                                    <a href="{% url 'gestion:favorite' employee.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if employee.is_favorite %}active{% endif %}"></span></a>
+                                </td>
+                                <td>
+                                    <form action="{% url 'gestion:delete_employee' companie.id employee.id %}" method="post" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="employee_id" value="{{ employee.id }}" />
+                                        <button type="submit" class="btn btn-danger btn-xs">
+                                            <span class="glyphicon glyphicon-remove"></span>&nbsp; Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

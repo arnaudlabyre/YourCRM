@@ -1,0 +1,58 @@
+{% extends 'gestion/base.html' %}
+{% block title %}All Employees{% endblock %}
+{% block employees_active %}active{% endblock %}
+
+{% block body %}
+<div class="container-fluid songs-container">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <ul class="nav nav-pills" style="margin-bottom: 10px;">
+                <li role="presentation" {% if filter_by == 'all' %}class="active"{% endif %}><a href="{% url 'gestion:employees' 'all' %}">View All</a></li>
+                <li role="presentation" {% if filter_by == 'favorites' %}class="active"{% endif %}><a href="{% url 'gestion:employees' 'favorites' %}">Favorites</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-sm-12">
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Surname</th>
+                                <th>Companie</th>
+                                <th>Favorite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employee_list %}
+                                <tr>
+                                    <td>{{ employee.employee_name }}</td>
+                                    <td>{{ employee.employee_surname }}</td>
+                                    <td>
+                                        <a href="{% url 'gestion:detail' employee.companie.id %}">
+                                            <img src="{{ employee.companie.companie_logo.url }}" class="img-responsive" style="width: 20px; float: left; margin-right: 10px;" />
+                                        </a>
+                                        <a href="{% url 'gestion:detail' employee.companie.id %}">{{ employee.companie.companie_name }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'gestion:favorite' employee.id %}" class="btn-favorite"><span class="glyphicon glyphicon-star {% if employee.is_favorite %}active{% endif %}"></span></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
